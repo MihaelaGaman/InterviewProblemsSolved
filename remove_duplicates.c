@@ -1,0 +1,59 @@
+/**
+Design  an  algorithm  and  write  code  to  remove  the  duplicate  characters
+in  a  string without using any additional buffer.
+NOTE: One or two additional variables are fine, an extra copy of the array is not
+FOLLOW UP
+Write the test cases for this method.
+*/
+#include <stdio.h>
+
+static void remove_duplicates_inplace(char *s)
+{
+	if (s == NULL)
+		return;
+	
+	int len = strlen(s);
+	
+	if (len < 2)
+		return;	
+		
+	int tail = 1;
+	int i, j;
+	
+	for (i = 1; i < len; i++) {
+		for (j = 0; j < tail; j++) {
+			if (s[i] == s[j])
+				break;
+		}
+		
+		if (j == tail) {
+			s[tail] = s[i];
+			tail ++;
+		}
+	}
+	
+	s[tail] = 0;	
+}
+
+#include <stdio.h>
+#include <string.h>
+ 
+int main()
+{
+  	//char str[100];
+  	int i, j, k;
+ 
+  	//printf("\n Please Enter any String :  ");
+  	//gets(str);
+	
+	/* Test 1: No duplicates */
+	//char str[] = "computer";
+	
+	/* Test 2: All duplicates */
+	char str[] = "aaaaaaaa";
+		
+	remove_duplicates_inplace(str);
+	printf("\n The Final String after Removing All Duplicates = %s ", str);
+	
+  	return 0;
+}
