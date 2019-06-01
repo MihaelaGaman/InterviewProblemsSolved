@@ -14,13 +14,20 @@ class Node:
         n.next = end
 
 class Stack:
-    def __init__(self):
+    def __init__(self, name=""):
         self.top = None
+        self.name = name
 
-    def peek(self):
+    def peek(self, prt=False):
+        if prt == True:
+            print "Stack ", self.name, " peek: ", (None if self.top == None else self.top.data)
+
         return None if self.top == None else self.top.data
 
-    def pop(self):
+    def pop(self, prt=False):
+        if prt == True:
+            print "Stack ", self.name, " pop: ", (None if self.top == None else self.top.data)
+
         if self.top != None:
             item = self.top.data
             self.top = self.top.next
@@ -28,7 +35,10 @@ class Stack:
 
         return None
 
-    def push(self, item): 
+    def push(self, item, prt=False):
+        if prt == True:
+            print "Stack ", self.name, " push: ", item
+
         t = Node(item)
         t.next = self.top
         self.top = t
@@ -119,6 +129,9 @@ in that limited space:
 - for stack 3, use [2n/3, n)
 """
 
+print 
+print "Exercise 3.1."
+
 n = 21 
 ss = int(n/3) # stack size
 buf = [0 for i in range(n)]
@@ -185,7 +198,8 @@ How would you design a stack which, in addition to push and pop, also has a func
 min which returns the minimum element? Push, pop and min should all operate in 
 O(1) time.
 """
-
+print
+print "Exercise 3.2."
 s = StackWithMin()
 s.pushMin(14)
 s.pushMin(23)
@@ -287,14 +301,135 @@ You have the following constraints:
 
 Write a program to move the disks from the first rod to the last using Stacks.
 """
-A = Stack()
-B = Stack()
-C = Stack()
+
+print
+print "Exercise 3.4."
+A = Stack(name="A")
+B = Stack(name="B")
+C = Stack(name="C")
 
 no = 10
 
-for i in range(no, -1, 0):
-    A.push(i)
+for i in range(no, -1, -1):
+    A.push(i, True)
+
+"""
+SOLUTION from tutorialspoint.com
+
+START
+Procedure Hanoi(disk, source, dest, aux)
+
+   IF disk == 1, THEN
+      move disk from source to dest
+   ELSE
+      Hanoi(disk - 1, source, aux, dest)     // Step 1
+      move disk from source to dest          // Step 2
+      Hanoi(disk - 1, aux, dest, source)     // Step 3
+   END IF
+
+END Procedure
+STOP
+
+"""
+def Hanoi(disk, src, dest, aux):
+    if disk == 1:
+        d = src.pop()
+        dest.push(d)
+    else:
+        Hanoi(disk - 1, src, aux, dest)
+        d = src.pop()
+        dest.push(d)
+        Hanoi(disk - 1, aux, dest, src)
+
+print
+print "Moving begins..."
+Hanoi(11, A, C, B)
+
+while C.peek() != None:
+    C.pop(prt=True)
+
+# -------------------------------------------------------------------
+
+"""
+3.5.
+
+Implement MyQueue class which implements a queue using 2 stacks.
+"""
+print
+print "Exercise 3.5."
 
 
-# TODO
+class MyQueue:
+    def __init__(self):
+        self.s1 = Stack(name="s1") # holds the oldest elements (accessed at enqueue)
+        self.s2 = Stack(name="s2") # holds the head (accessed at dequeue)
+
+    def enqueue(self, elem):
+        self.s1.push(elem, prt=True)
+    
+    def dequeue(self):
+        if self.s2.peek() == None:
+            # Refill the head
+            while self.s1.peek() != None:
+                self.s2.push(self.s1.pop())
+
+        return self.s2.pop(prt=True)
+
+    def peek(self):
+        if self.s2.peek() == None:
+            # Refill the head
+            while self.s1.peek() != None:
+                self.s2.push(self.s1.pop())
+
+        return self.s2.peek(prt=True)
+
+q = MyQueue()
+q.enqueue(1)
+q.enqueue(12)
+q.enqueue(23)
+q.enqueue(5)
+q.dequeue()
+q.peek()
+q.enqueue(123)
+q.dequeue()
+q.dequeue()
+q.enqueue(36)
+q.dequeue()
+q.enqueue(30)
+q.dequeue()
+q.peek()
+
+# -----------------------------------------------------------
+
+"""
+Exercise 3.6.
+
+Write a program to sort a stack in ascending order.
+"""
+print
+print "Exercise 3.6."
+
+l = [1, 12, 23, 5, 123, 36, 30]
+stack = Stack("initial")
+
+for elem in l:
+    stack.push(elem, prt = True)
+
+print
+
+def sort_stack(stack):
+    aux_stack = Stack("sorted")
+
+    while stack.peek() != None:
+        tmp = stack.pop()
+        while aux_stack.peek() != None and aux_stack.peek() > tmp:
+            aux_tmp = aux_stack.pop()
+            stack.push(aux_tmp)
+        aux_stack.push(tmp)
+
+    return aux_stack
+
+asc_stack = sort_stack(stack)
+while asc_stack.peek():
+    asc_stack.pop(prt=True)
+
